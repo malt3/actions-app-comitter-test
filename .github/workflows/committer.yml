@@ -23,18 +23,23 @@ jobs:
       - name: Check if intervention is needed
         id: check
         run: |
-          unwantedFileExists=false
+          unwantedFileIsSafe=false
           if [[ -f "unwantedFile.go" ]]; then
-              echo unwantedFile.go exists.
-              unwantedFileExists=true
+              echo unwantedFile.go exists. >> $GITHUB_STEP_SUMMARY
+              if [[ $(cat "unwantedFile.go") == "safe" ]]; then
+                unwantedFileIsSafe=true
+              else
+                echo safe > unwantedFile.go
+              fi
+          else
+              echo unwantedFile.go does not exist. >> $GITHUB_STEP_SUMMARY
           fi
-          echo "unwantedFileExists=${unwantedFileExists}" >> $GITHUB_OUTPUT
+          echo "unwantedFileIsSafe=${unwantedFileIsSafe}" >> $GITHUB_OUTPUT
 
       - name: Commit
-        if: steps.check.outputs.unwantedFileExists == 'true'
+        if: steps.check.outputs.unwantedFileIsSafe != 'true'
         run: |
           git config --global user.name "renovate[bot]"
           git config --global user.email "29139614+renovate[bot]@users.noreply.github.com"
-          git rm unwantedFile.go
-          git commit -m "Commit from GitHub Actions. Removed unwantedFile.go."
+          git commit -am "Commit from GitHub Actions. Defused unwantedFile.go."
           git push
