@@ -1,6 +1,6 @@
 name: GitHub Actions Committer test
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
-on: [push, pull_request]
+on: [pull_request]
 jobs:
   job:
     runs-on: ubuntu-latest
@@ -10,25 +10,11 @@ jobs:
         uses: tibdex/github-app-token@v1
         with:
           app_id: ${{ secrets.APP_ID }}
-
-          # Optional.
-          # github_api_url: https://api.example.com
-
-          # Optional.
-          # installation_id: 1337
-
-          # Optional.
-          # Using a YAML multiline string to avoid escaping the JSON quotes.
-          # permissions: >-
-          #   {"members": "read"}
-
           private_key: ${{ secrets.PRIVATE_KEY }}
-
-          # Optional.
-          # repository: owner/repo
 
       - uses: actions/checkout@v2
         with:
+          ref: ${{ github.head_ref }}
           token: ${{ steps.generate_token.outputs.token }}
 
       - name: Check if intervention is needed

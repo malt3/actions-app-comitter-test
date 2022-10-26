@@ -1,5 +1,5 @@
 name: GitHub Actions Unwanted File Check
-on: [push, pull_request]
+on: [push]
 jobs:
   job:
     runs-on: ubuntu-latest
