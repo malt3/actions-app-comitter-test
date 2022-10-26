@@ -1,6 +1,6 @@
 name: GitHub Actions Committer test
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
-on: [push, pull_request]
+on: [pull_request]
 jobs:
   job:
     runs-on: ubuntu-latest
@@ -29,6 +29,7 @@ jobs:
 
       - uses: actions/checkout@v2
         with:
+          ref: ${{ github.head_ref }}
           token: ${{ steps.generate_token.outputs.token }}
 
       - name: Check if intervention is needed
