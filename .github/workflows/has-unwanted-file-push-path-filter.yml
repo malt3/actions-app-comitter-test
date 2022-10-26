@@ -1,5 +1,8 @@
 name: GitHub Actions Unwanted File Check
-on: [push, pull_request]
+on:
+  push:
+    paths:
+      - unwantedFile.go
 jobs:
   job:
     runs-on: ubuntu-latest
@@ -8,9 +11,9 @@ jobs:
 
       - name: Fail if intervention is needed
         run: |
-          if [[ -f "unwantedFile" ]]; then
-              echo unwantedFile exists. >> $GITHUB_STEP_SUMMARY
+          if [[ -f "unwantedFile.go" ]]; then
+              echo unwantedFile.go exists. >> $GITHUB_STEP_SUMMARY
               exit 1
           else
-              echo unwantedFile does not exist. >> $GITHUB_STEP_SUMMARY
+              echo unwantedFile.go does not exist. >> $GITHUB_STEP_SUMMARY
           fi
