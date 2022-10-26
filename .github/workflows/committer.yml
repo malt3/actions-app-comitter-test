@@ -1,0 +1,51 @@
+name: GitHub Actions Committer test
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on: [push, pull_request]
+jobs:
+  job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate token
+        id: generate_token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.APP_ID }}
+
+          # Optional.
+          # github_api_url: https://api.example.com
+
+          # Optional.
+          # installation_id: 1337
+
+          # Optional.
+          # Using a YAML multiline string to avoid escaping the JSON quotes.
+          # permissions: >-
+          #   {"members": "read"}
+
+          private_key: ${{ secrets.PRIVATE_KEY }}
+
+          # Optional.
+          # repository: owner/repo
+
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ steps.generate_token.outputs.token }}
+
+      - name: Check if intervention is needed
+        id: check
+        run: |
+          unwantedFileExists=false
+          if [[ -f "unwantedFile" ]]; then
+              echo unwantedFile exists.
+              unwantedFileExists=true
+          fi
+          echo "unwantedFileExists=${unwantedFileExists}" >> $GITHUB_OUTPUT
+
+      - name: Commit
+        if: steps.check.outputs.unwantedFileExists == 'true'
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git rm unwantedFile
+          git commit -m "Commit from GitHub Actions. Removed unwantedFile."
+          git push
